@@ -1,0 +1,12 @@
+server:
+  port: ${PORT:8080}
+
+gigledger:
+  supabase:
+    url: ${SUPABASE_URL:}
+    service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
+    jwt-issuer: ${SUPABASE_JWT_ISSUER:${SUPABASE_URL:}/auth/v1}
+
+spring:
+  jackson:
+    default-property-inclusion: non_null
