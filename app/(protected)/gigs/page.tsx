@@ -1,12 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GigsClient } from "@/components/gigs/gigs-client";
 
 export default function GigsPage() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Gigs</CardTitle>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">RLS-scoped gig CRUD will live here.</CardContent>
-    </Card>
-  );
+  return <GigsClient />;
 }
