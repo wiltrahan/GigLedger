@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { InvoiceFormModal } from "@/components/invoices/invoice-form-modal";
@@ -14,6 +15,7 @@ import { Input } from "@/components/ui/input";
 type FormMode = "create" | "edit" | "view";
 
 export function InvoicesClient() {
+  const searchParams = useSearchParams();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [gigs, setGigs] = useState<Gig[]>([]);
@@ -23,7 +25,7 @@ export function InvoicesClient() {
 
   const [statusFilter, setStatusFilter] = useState("all");
   const [clientFilter, setClientFilter] = useState("all");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("invoice") ?? "");
 
   const [formOpen, setFormOpen] = useState(false);
   const [formMode, setFormMode] = useState<FormMode>("create");
@@ -62,6 +64,11 @@ export function InvoicesClient() {
   useEffect(() => {
     void loadAll();
   }, [loadAll]);
+
+  useEffect(() => {
+    const invoiceQuery = searchParams.get("invoice") ?? "";
+    setSearch(invoiceQuery);
+  }, [searchParams]);
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter((invoice) => {
