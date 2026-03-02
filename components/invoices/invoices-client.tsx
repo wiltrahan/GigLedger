@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { InvoiceFormModal } from "@/components/invoices/invoice-form-modal";
@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 type FormMode = "create" | "edit" | "view";
 
 export function InvoicesClient() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
@@ -36,6 +37,7 @@ export function InvoicesClient() {
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareLink, setShareLink] = useState("");
+  const [handledNewQuery, setHandledNewQuery] = useState(false);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
@@ -69,6 +71,36 @@ export function InvoicesClient() {
     const invoiceQuery = searchParams.get("invoice") ?? "";
     setSearch(invoiceQuery);
   }, [searchParams]);
+
+  useEffect(() => {
+    const shouldOpenCreate = searchParams.get("new") === "1";
+    if (!shouldOpenCreate) {
+      if (handledNewQuery) setHandledNewQuery(false);
+      return;
+    }
+    if (handledNewQuery) return;
+    if (formOpen && formMode === "create") return;
+
+    setFormMode("create");
+    setEditingInvoiceId(null);
+    setInvoiceForm(emptyInvoiceForm());
+    setFormOpen(true);
+    setHandledNewQuery(true);
+  }, [formMode, formOpen, handledNewQuery, searchParams]);
+
+  useEffect(() => {
+    const invoiceQuery = searchParams.get("invoice")?.trim().toLowerCase();
+    if (!invoiceQuery || invoices.length === 0) return;
+
+    const matchedInvoice = invoices.find((invoice) => invoice.invoice_number.toLowerCase() === invoiceQuery);
+    if (!matchedInvoice) return;
+    if (formOpen && editingInvoiceId === matchedInvoice.id && formMode === "view") return;
+
+    setFormMode("view");
+    setEditingInvoiceId(matchedInvoice.id);
+    setInvoiceForm(invoiceToForm(matchedInvoice));
+    setFormOpen(true);
+  }, [editingInvoiceId, formMode, formOpen, invoices, searchParams]);
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter((invoice) => {
@@ -185,12 +217,31 @@ export function InvoicesClient() {
     window.open(`/api/invoices/${invoice.id}/pdf`, "_blank", "noopener,noreferrer");
   }
 
+  function closeInvoiceForm() {
+    setFormOpen(false);
+
+    if (searchParams.get("invoice")) {
+      router.replace("/invoices");
+      setSearch("");
+      return;
+    }
+
+    if (searchParams.get("new")) {
+      setHandledNewQuery(true);
+      router.replace("/invoices");
+    }
+  }
+
   return (
-    <div className="space-y-4">
-      <Card>
+    <div className="space-y-4 text-slate-100">
+      <Card className="dashboard-panel rounded-[28px] border-white/10">
         <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <CardTitle>Invoices</CardTitle>
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-[var(--dashboard-accent)]">Invoices</p>
+            <CardTitle className="mt-2 text-2xl text-white">Billing, payment status, and sharing</CardTitle>
+          </div>
           <Button
+            className="rounded-full bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]"
             onClick={() => {
               setFormMode("create");
               setEditingInvoiceId(null);
@@ -203,9 +254,9 @@ export function InvoicesClient() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3 md:grid-cols-4">
-            <Input placeholder="Search invoice #" value={search} onChange={(event) => setSearch(event.target.value)} />
+            <Input className="dashboard-input" placeholder="Search invoice #" value={search} onChange={(event) => setSearch(event.target.value)} />
             <select
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="dashboard-select h-10 rounded-md px-3 text-sm"
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value)}
             >
@@ -217,7 +268,7 @@ export function InvoicesClient() {
               <option value="void">Void</option>
             </select>
             <select
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="dashboard-select h-10 rounded-md px-3 text-sm"
               value={clientFilter}
               onChange={(event) => setClientFilter(event.target.value)}
             >
@@ -230,12 +281,12 @@ export function InvoicesClient() {
             </select>
           </div>
 
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-          {loading ? <p className="text-sm text-muted-foreground">Loading invoices...</p> : null}
+          {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+          {loading ? <p className="text-sm text-slate-400">Loading invoices...</p> : null}
 
-          <div className="overflow-x-auto rounded-md border">
+          <div className="dashboard-table-wrap overflow-x-auto rounded-[22px]">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-left">
+              <thead className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
                 <tr>
                   <th className="px-4 py-2 font-medium">Invoice #</th>
                   <th className="px-4 py-2 font-medium">Client</th>
@@ -248,7 +299,7 @@ export function InvoicesClient() {
               </thead>
               <tbody>
                 {filteredInvoices.map((invoice) => (
-                  <tr key={invoice.id} className="border-t">
+                  <tr key={invoice.id} className="border-t border-white/5 text-slate-200">
                     <td className="px-4 py-2">{invoice.invoice_number}</td>
                     <td className="px-4 py-2">{invoice.clients?.name ?? "-"}</td>
                     <td className="px-4 py-2">{formatDate(invoice.issue_date)}</td>
@@ -260,6 +311,7 @@ export function InvoicesClient() {
                     <td className="px-4 py-2">
                       <div className="flex flex-wrap gap-2">
                         <Button
+                          className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
                           variant="outline"
                           size="sm"
                           onClick={() => {
@@ -272,6 +324,7 @@ export function InvoicesClient() {
                           View
                         </Button>
                         <Button
+                          className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
                           variant="outline"
                           size="sm"
                           onClick={() => {
@@ -284,6 +337,7 @@ export function InvoicesClient() {
                           Edit
                         </Button>
                         <Button
+                          className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
                           variant="outline"
                           size="sm"
                           onClick={() => {
@@ -293,13 +347,13 @@ export function InvoicesClient() {
                         >
                           Mark Paid
                         </Button>
-                        <Button variant="outline" size="sm" onClick={() => void createShareLink(invoice)}>
+                        <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" variant="outline" size="sm" onClick={() => void createShareLink(invoice)}>
                           Share Link
                         </Button>
-                        <Button variant="outline" size="sm" onClick={() => void downloadPdf(invoice)}>
+                        <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" variant="outline" size="sm" onClick={() => void downloadPdf(invoice)}>
                           Download PDF
                         </Button>
-                        <Button variant="destructive" size="sm" onClick={() => void deleteInvoice(invoice.id)}>
+                        <Button className="bg-rose-500/80 text-white hover:bg-rose-500" variant="destructive" size="sm" onClick={() => void deleteInvoice(invoice.id)}>
                           Delete
                         </Button>
                       </div>
@@ -308,7 +362,7 @@ export function InvoicesClient() {
                 ))}
                 {!loading && filteredInvoices.length === 0 ? (
                   <tr>
-                    <td className="px-4 py-10 text-center text-muted-foreground" colSpan={7}>
+                    <td className="px-4 py-10 text-center text-slate-400" colSpan={7}>
                       No invoices match your filters.
                     </td>
                   </tr>
@@ -327,7 +381,7 @@ export function InvoicesClient() {
         clients={clients}
         gigs={gigs}
         loading={saving}
-        onClose={() => setFormOpen(false)}
+        onClose={closeInvoiceForm}
         onChange={setInvoiceForm}
         onSubmit={() => void submitInvoice()}
       />

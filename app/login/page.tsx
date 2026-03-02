@@ -14,7 +14,7 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-56px)] max-w-md items-center px-6 py-16">
+    <main className="mx-auto flex min-h-screen max-w-md items-center px-6 py-16">
       <LoginForm />
     </main>
   );
