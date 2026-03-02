@@ -20,9 +20,10 @@ type Props = {
   onClose: () => void;
   onChange: (next: InvoiceFormState) => void;
   onSubmit: () => void;
+  onRequestEdit?: () => void;
 };
 
-export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loading = false, onClose, onChange, onSubmit }: Props) {
+export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loading = false, onClose, onChange, onSubmit, onRequestEdit }: Props) {
   const isReadOnly = mode === "view";
 
   const subtotal = useMemo(() => calcSubtotal(form.line_items), [form.line_items]);
@@ -32,11 +33,11 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
-      <Card className="w-full max-w-5xl">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm">
+      <Card className="dashboard-panel-strong w-full max-w-5xl rounded-[28px] border-white/10 text-slate-100">
         <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <CardTitle>{title}</CardTitle>
-          <Button variant="outline" onClick={onClose}>
+          <CardTitle className="text-white">{title}</CardTitle>
+          <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" variant="outline" onClick={onClose}>
             Close
           </Button>
         </CardHeader>
@@ -45,7 +46,7 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
             <label className="space-y-2 text-sm">
               <span className="font-medium">Client</span>
               <select
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                className="dashboard-select h-10 w-full rounded-md px-3 text-sm"
                 value={form.client_id}
                 disabled={isReadOnly}
                 onChange={(event) => onChange({ ...form, client_id: event.target.value })}
@@ -62,7 +63,7 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
             <label className="space-y-2 text-sm">
               <span className="font-medium">Gig (optional)</span>
               <select
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                className="dashboard-select h-10 w-full rounded-md px-3 text-sm"
                 value={form.gig_id}
                 disabled={isReadOnly}
                 onChange={(event) => onChange({ ...form, gig_id: event.target.value })}
@@ -79,6 +80,7 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
             <label className="space-y-2 text-sm">
               <span className="font-medium">Invoice #</span>
               <Input
+                className="dashboard-input"
                 value={form.invoice_number}
                 disabled={isReadOnly}
                 onChange={(event) => onChange({ ...form, invoice_number: event.target.value })}
@@ -89,6 +91,7 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
             <label className="space-y-2 text-sm">
               <span className="font-medium">Issue Date</span>
               <Input
+                className="dashboard-input"
                 type="date"
                 value={form.issue_date}
                 disabled={isReadOnly}
@@ -99,6 +102,7 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
             <label className="space-y-2 text-sm">
               <span className="font-medium">Due Date</span>
               <Input
+                className="dashboard-input"
                 type="date"
                 value={form.due_date}
                 disabled={isReadOnly}
@@ -109,9 +113,10 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">Line Items</h3>
+              <h3 className="text-sm font-semibold text-white">Line Items</h3>
               {!isReadOnly ? (
                 <Button
+                  className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
                   type="button"
                   variant="outline"
                   size="sm"
@@ -139,11 +144,12 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
 
             <div className="space-y-3">
               {form.line_items.map((item, index) => (
-                <div key={index} className="rounded-md border p-3">
+                <div key={index} className="rounded-[22px] border border-white/10 bg-white/5 p-3">
                   <div className="grid gap-3 md:grid-cols-12">
                     <label className="md:col-span-4">
                       <span className="mb-1 block text-xs font-medium">Description</span>
                       <Input
+                        className="dashboard-input"
                         value={item.description}
                         disabled={isReadOnly}
                         onChange={(event) => {
@@ -156,6 +162,7 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
                     <label className="md:col-span-2">
                       <span className="mb-1 block text-xs font-medium">Qty</span>
                       <Input
+                        className="dashboard-input"
                         type="number"
                         step="0.01"
                         value={item.quantity}
@@ -170,6 +177,7 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
                     <label className="md:col-span-2">
                       <span className="mb-1 block text-xs font-medium">Unit Price ($)</span>
                       <Input
+                        className="dashboard-input"
                         type="text"
                         inputMode="decimal"
                         value={item.unit_price_display ?? (item.unit_price_cents / 100).toFixed(2)}
@@ -204,6 +212,7 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
                     <label className="md:col-span-2">
                       <span className="mb-1 block text-xs font-medium">Service Date</span>
                       <Input
+                        className="dashboard-input"
                         type="date"
                         value={item.service_date ?? ""}
                         disabled={isReadOnly}
@@ -215,13 +224,13 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
                       />
                     </label>
                     <div className="flex items-end justify-end gap-3 md:col-span-2">
-                      <span className="whitespace-nowrap text-sm font-medium">{formatCurrency(calcLineTotal(item))}</span>
+                      <span className="whitespace-nowrap text-sm font-medium text-white">{formatCurrency(calcLineTotal(item))}</span>
                       {!isReadOnly ? (
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="shrink-0"
+                          className="shrink-0 border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
                           onClick={() => {
                             const next = form.line_items.filter((_, currentIndex) => currentIndex !== index);
                             onChange({
@@ -254,6 +263,7 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
           <label className="block space-y-2 text-sm">
             <span className="font-medium">Notes</span>
             <Textarea
+              className="dashboard-input min-h-[100px]"
               value={form.notes}
               disabled={isReadOnly}
               onChange={(event) => onChange({ ...form, notes: event.target.value })}
@@ -261,25 +271,31 @@ export function InvoiceFormModal({ mode, open, title, form, clients, gigs, loadi
             />
           </label>
 
-          <div className="flex items-center justify-between border-t pt-4">
-            <div className="text-sm text-muted-foreground">Totals auto-calculate from line items.</div>
+          <div className="flex items-center justify-between border-t border-white/10 pt-4">
+            <div className="text-sm text-slate-400">Totals auto-calculate from line items.</div>
             <div className="space-y-1 text-right">
-              <p className="text-sm text-muted-foreground">Subtotal: {formatCurrency(subtotal)}</p>
-              <p className="text-sm text-muted-foreground">Tax: {formatCurrency(tax)}</p>
-              <p className="text-xl font-semibold">Total: {formatCurrency(total)}</p>
+              <p className="text-sm text-slate-400">Subtotal: {formatCurrency(subtotal)}</p>
+              <p className="text-sm text-slate-400">Tax: {formatCurrency(tax)}</p>
+              <p className="text-xl font-semibold text-white">Total: {formatCurrency(total)}</p>
             </div>
           </div>
 
-          {!isReadOnly ? (
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button disabled={loading} onClick={onSubmit}>
+          <div className="flex justify-end gap-2">
+            <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" variant="outline" onClick={onClose}>
+              {isReadOnly ? "Close" : "Cancel"}
+            </Button>
+            {isReadOnly ? (
+              onRequestEdit ? (
+                <Button className="bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]" onClick={onRequestEdit}>
+                  Edit Invoice
+                </Button>
+              ) : null
+            ) : (
+              <Button className="bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]" disabled={loading} onClick={onSubmit}>
                 {loading ? "Saving..." : mode === "create" ? "Create Invoice" : "Save Changes"}
               </Button>
-            </div>
-          ) : null}
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -193,22 +193,25 @@ export function ClientsClient() {
   }
 
   return (
-    <div className="space-y-4">
-      <Card>
+    <div className="space-y-4 text-slate-100">
+      <Card className="dashboard-panel rounded-[28px] border-white/10">
         <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <CardTitle>Clients</CardTitle>
-          <Button onClick={openCreateModal}>Add Client</Button>
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-[var(--dashboard-accent)]">Clients</p>
+            <CardTitle className="mt-2 text-2xl text-white">People and billing contacts</CardTitle>
+          </div>
+          <Button className="rounded-full bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]" onClick={openCreateModal}>Add Client</Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Input placeholder="Search clients" value={search} onChange={(event) => setSearch(event.target.value)} />
+          <Input className="dashboard-input" placeholder="Search clients" value={search} onChange={(event) => setSearch(event.target.value)} />
 
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-          {success ? <p className="text-sm text-emerald-700">{success}</p> : null}
-          {loading ? <p className="text-sm text-muted-foreground">Loading clients...</p> : null}
+          {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+          {success ? <p className="text-sm text-emerald-300">{success}</p> : null}
+          {loading ? <p className="text-sm text-slate-400">Loading clients...</p> : null}
 
-          <div className="overflow-x-auto rounded-md border">
+          <div className="dashboard-table-wrap overflow-x-auto rounded-[22px]">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-left">
+              <thead className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
                 <tr>
                   <th className="px-4 py-2 font-medium">Name</th>
                   <th className="px-4 py-2 font-medium">Email</th>
@@ -219,17 +222,17 @@ export function ClientsClient() {
               </thead>
               <tbody>
                 {filteredClients.map((client) => (
-                  <tr key={client.id} className="border-t">
+                  <tr key={client.id} className="border-t border-white/5 text-slate-200">
                     <td className="px-4 py-2">{client.name}</td>
                     <td className="px-4 py-2">{client.email || "-"}</td>
                     <td className="px-4 py-2">{client.phone || "-"}</td>
                     <td className="px-4 py-2">{formatDate(client.created_at)}</td>
                     <td className="px-4 py-2">
                       <div className="flex flex-wrap gap-2">
-                        <Button size="sm" variant="outline" onClick={() => openEditModal(client)}>
+                        <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" size="sm" variant="outline" onClick={() => openEditModal(client)}>
                           Edit
                         </Button>
-                        <Button size="sm" variant="destructive" onClick={() => void deleteClient(client)}>
+                        <Button className="bg-rose-500/80 text-white hover:bg-rose-500" size="sm" variant="destructive" onClick={() => void deleteClient(client)}>
                           Delete
                         </Button>
                       </div>
@@ -239,7 +242,7 @@ export function ClientsClient() {
 
                 {!loading && filteredClients.length === 0 ? (
                   <tr>
-                    <td className="px-4 py-10 text-center text-muted-foreground" colSpan={5}>
+                    <td className="px-4 py-10 text-center text-slate-400" colSpan={5}>
                       No clients found.
                     </td>
                   </tr>
@@ -251,11 +254,11 @@ export function ClientsClient() {
       </Card>
 
       {modalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <Card className="w-full max-w-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <Card className="dashboard-panel-strong w-full max-w-2xl rounded-[28px] border-white/10 text-slate-100">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>{editingClient ? "Edit Client" : "Add Client"}</CardTitle>
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
+              <CardTitle className="text-white">{editingClient ? "Edit Client" : "Add Client"}</CardTitle>
+              <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" variant="outline" onClick={() => setModalOpen(false)}>
                 Close
               </Button>
             </CardHeader>
@@ -263,35 +266,35 @@ export function ClientsClient() {
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="space-y-2 text-sm">
                   <span className="font-medium">Name</span>
-                  <Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
+                  <Input className="dashboard-input" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
                 </label>
 
                 <label className="space-y-2 text-sm">
                   <span className="font-medium">Email</span>
-                  <Input value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} />
+                  <Input className="dashboard-input" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} />
                 </label>
 
                 <label className="space-y-2 text-sm">
                   <span className="font-medium">Phone</span>
-                  <Input value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} />
+                  <Input className="dashboard-input" value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} />
                 </label>
 
                 <label className="space-y-2 text-sm md:col-span-2">
                   <span className="font-medium">Billing Address</span>
-                  <Input value={form.billing_address} onChange={(event) => setForm({ ...form, billing_address: event.target.value })} />
+                  <Input className="dashboard-input" value={form.billing_address} onChange={(event) => setForm({ ...form, billing_address: event.target.value })} />
                 </label>
               </div>
 
               <label className="block space-y-2 text-sm">
                 <span className="font-medium">Notes</span>
-                <Textarea value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
+                <Textarea className="dashboard-input min-h-[100px]" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
               </label>
 
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setModalOpen(false)}>
+                <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" variant="outline" onClick={() => setModalOpen(false)}>
                   Cancel
                 </Button>
-                <Button disabled={saving || !form.name.trim()} onClick={() => void submitClient()}>
+                <Button className="bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]" disabled={saving || !form.name.trim()} onClick={() => void submitClient()}>
                   {saving ? "Saving..." : editingClient ? "Save Changes" : "Create Client"}
                 </Button>
               </div>

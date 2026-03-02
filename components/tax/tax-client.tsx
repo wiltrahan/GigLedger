@@ -202,101 +202,104 @@ export function TaxClient() {
   }
 
   return (
-    <div className="space-y-4">
-      <Card>
+    <div className="space-y-4 text-slate-100">
+      <Card className="dashboard-panel rounded-[28px] border-white/10">
         <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <CardTitle>W-9 Info (Info Sheet)</CardTitle>
-          <Button variant="outline" disabled={exporting} onClick={() => void exportW9Pdf()}>
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-[var(--dashboard-accent)]">Tax</p>
+            <CardTitle className="mt-2 text-2xl text-white">W-9 info and yearly totals</CardTitle>
+          </div>
+          <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" variant="outline" disabled={exporting} onClick={() => void exportW9Pdf()}>
             {exporting ? "Exporting..." : "Export W-9 info sheet PDF"}
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-xs text-muted-foreground">This stores reference information only and does not generate an official IRS W-9 form.</p>
+          <p className="text-xs text-slate-400">This stores reference information only and does not generate an official IRS W-9 form.</p>
 
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-          {success ? <p className="text-sm text-emerald-700">{success}</p> : null}
-          {loadingW9 ? <p className="text-sm text-muted-foreground">Loading W-9 info...</p> : null}
+          {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+          {success ? <p className="text-sm text-emerald-300">{success}</p> : null}
+          {loadingW9 ? <p className="text-sm text-slate-400">Loading W-9 info...</p> : null}
 
           <div className="grid gap-4 md:grid-cols-2">
             <label className="space-y-2 text-sm">
-              <span className="font-medium">Legal Name</span>
-              <Input value={w9.legal_name} onChange={(event) => setW9({ ...w9, legal_name: event.target.value })} />
+              <span className="font-medium text-slate-200">Legal Name</span>
+              <Input className="dashboard-input" value={w9.legal_name} onChange={(event) => setW9({ ...w9, legal_name: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">Business Name</span>
-              <Input value={w9.business_name} onChange={(event) => setW9({ ...w9, business_name: event.target.value })} />
+              <span className="font-medium text-slate-200">Business Name</span>
+              <Input className="dashboard-input" value={w9.business_name} onChange={(event) => setW9({ ...w9, business_name: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">Tax Classification</span>
-              <Input value={w9.tax_classification} onChange={(event) => setW9({ ...w9, tax_classification: event.target.value })} />
+              <span className="font-medium text-slate-200">Tax Classification</span>
+              <Input className="dashboard-input" value={w9.tax_classification} onChange={(event) => setW9({ ...w9, tax_classification: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">TIN Last 4</span>
-              <Input value={w9.tin_last4} onChange={(event) => setW9({ ...w9, tin_last4: event.target.value })} maxLength={4} />
+              <span className="font-medium text-slate-200">TIN Last 4</span>
+              <Input className="dashboard-input" value={w9.tin_last4} onChange={(event) => setW9({ ...w9, tin_last4: event.target.value })} maxLength={4} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">Address Line 1</span>
-              <Input value={w9.address_line1} onChange={(event) => setW9({ ...w9, address_line1: event.target.value })} />
+              <span className="font-medium text-slate-200">Address Line 1</span>
+              <Input className="dashboard-input" value={w9.address_line1} onChange={(event) => setW9({ ...w9, address_line1: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">Address Line 2</span>
-              <Input value={w9.address_line2} onChange={(event) => setW9({ ...w9, address_line2: event.target.value })} />
+              <span className="font-medium text-slate-200">Address Line 2</span>
+              <Input className="dashboard-input" value={w9.address_line2} onChange={(event) => setW9({ ...w9, address_line2: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">City</span>
-              <Input value={w9.city} onChange={(event) => setW9({ ...w9, city: event.target.value })} />
+              <span className="font-medium text-slate-200">City</span>
+              <Input className="dashboard-input" value={w9.city} onChange={(event) => setW9({ ...w9, city: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">State</span>
-              <Input value={w9.state} onChange={(event) => setW9({ ...w9, state: event.target.value })} />
+              <span className="font-medium text-slate-200">State</span>
+              <Input className="dashboard-input" value={w9.state} onChange={(event) => setW9({ ...w9, state: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">Postal Code</span>
-              <Input value={w9.postal_code} onChange={(event) => setW9({ ...w9, postal_code: event.target.value })} />
+              <span className="font-medium text-slate-200">Postal Code</span>
+              <Input className="dashboard-input" value={w9.postal_code} onChange={(event) => setW9({ ...w9, postal_code: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">Country</span>
-              <Input value={w9.country} onChange={(event) => setW9({ ...w9, country: event.target.value })} />
+              <span className="font-medium text-slate-200">Country</span>
+              <Input className="dashboard-input" value={w9.country} onChange={(event) => setW9({ ...w9, country: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">Email</span>
-              <Input value={w9.email} onChange={(event) => setW9({ ...w9, email: event.target.value })} />
+              <span className="font-medium text-slate-200">Email</span>
+              <Input className="dashboard-input" value={w9.email} onChange={(event) => setW9({ ...w9, email: event.target.value })} />
             </label>
 
             <label className="space-y-2 text-sm">
-              <span className="font-medium">Phone</span>
-              <Input value={w9.phone} onChange={(event) => setW9({ ...w9, phone: event.target.value })} />
+              <span className="font-medium text-slate-200">Phone</span>
+              <Input className="dashboard-input" value={w9.phone} onChange={(event) => setW9({ ...w9, phone: event.target.value })} />
             </label>
           </div>
 
           <label className="block space-y-2 text-sm">
-            <span className="font-medium">Notes</span>
-            <Textarea value={w9.notes} onChange={(event) => setW9({ ...w9, notes: event.target.value })} />
+            <span className="font-medium text-slate-200">Notes</span>
+            <Textarea className="dashboard-input min-h-[100px]" value={w9.notes} onChange={(event) => setW9({ ...w9, notes: event.target.value })} />
           </label>
 
           <div className="flex justify-end">
-            <Button disabled={savingW9 || !w9.legal_name.trim()} onClick={() => void saveW9()}>
+            <Button className="bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]" disabled={savingW9 || !w9.legal_name.trim()} onClick={() => void saveW9()}>
               {savingW9 ? "Saving..." : "Save W-9 Info"}
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="dashboard-panel rounded-[28px] border-white/10">
         <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <CardTitle>Yearly Totals</CardTitle>
+          <CardTitle className="text-white">Yearly Totals</CardTitle>
           <select
-            className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+            className="dashboard-select h-10 rounded-md px-3 text-sm"
             value={year}
             onChange={(event) => setYear(Number(event.target.value))}
           >
@@ -308,20 +311,20 @@ export function TaxClient() {
           </select>
         </CardHeader>
         <CardContent>
-          {loadingSummary ? <p className="text-sm text-muted-foreground">Loading totals...</p> : null}
+          {loadingSummary ? <p className="text-sm text-slate-400">Loading totals...</p> : null}
 
           {summary ? (
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-md border bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">Total earned ({summary.year})</p>
-                <p className="mt-2 text-3xl font-semibold">{formatCurrency(summary.total_earned_cents)}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Based on payment records in the selected year.</p>
+              <div className="rounded-[22px] border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-400">Total earned ({summary.year})</p>
+                <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(summary.total_earned_cents)}</p>
+                <p className="mt-1 text-xs text-slate-400">Based on payment records in the selected year.</p>
               </div>
 
-              <div className="rounded-md border bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">Outstanding invoices ({summary.year})</p>
-                <p className="mt-2 text-3xl font-semibold">{formatCurrency(summary.outstanding_cents)}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Open balance from invoices issued in the selected year.</p>
+              <div className="rounded-[22px] border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-400">Outstanding invoices ({summary.year})</p>
+                <p className="mt-2 text-3xl font-semibold text-white">{formatCurrency(summary.outstanding_cents)}</p>
+                <p className="mt-1 text-xs text-slate-400">Open balance from invoices issued in the selected year.</p>
               </div>
             </div>
           ) : null}

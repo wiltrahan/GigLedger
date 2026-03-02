@@ -52,10 +52,10 @@ function generateInvoiceNumber() {
 }
 
 function statusClass(status: Gig["status"]) {
-  if (status === "completed") return "bg-emerald-100 text-emerald-700";
-  if (status === "booked") return "bg-blue-100 text-blue-700";
-  if (status === "cancelled") return "bg-rose-100 text-rose-700";
-  return "bg-slate-100 text-slate-700";
+  if (status === "completed") return "bg-emerald-400/15 text-emerald-200 ring-1 ring-emerald-300/20";
+  if (status === "booked") return "bg-cyan-400/15 text-cyan-100 ring-1 ring-cyan-300/20";
+  if (status === "cancelled") return "bg-rose-400/15 text-rose-200 ring-1 ring-rose-300/20";
+  return "bg-white/10 text-slate-200 ring-1 ring-white/10";
 }
 
 export function GigsClient() {
@@ -202,28 +202,31 @@ export function GigsClient() {
   }
 
   return (
-    <div className="space-y-4">
-      <Card>
+    <div className="space-y-4 text-slate-100">
+      <Card className="dashboard-panel rounded-[28px] border-white/10">
         <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <CardTitle>Gigs</CardTitle>
-          <Button onClick={() => setShowAddModal(true)}>Add Gig</Button>
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-[var(--dashboard-accent)]">Gigs</p>
+            <CardTitle className="mt-2 text-2xl text-white">Bookings and performance dates</CardTitle>
+          </div>
+          <Button className="rounded-full bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]" onClick={() => setShowAddModal(true)}>Add Gig</Button>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
-            <Button variant={tab === "upcoming" ? "default" : "outline"} onClick={() => setTab("upcoming")}>
+            <Button className={tab === "upcoming" ? "rounded-full bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]" : "rounded-full border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"} variant={tab === "upcoming" ? "default" : "outline"} onClick={() => setTab("upcoming")}>
               Upcoming
             </Button>
-            <Button variant={tab === "past" ? "default" : "outline"} onClick={() => setTab("past")}>
+            <Button className={tab === "past" ? "rounded-full bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]" : "rounded-full border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"} variant={tab === "past" ? "default" : "outline"} onClick={() => setTab("past")}>
               Past
             </Button>
           </div>
 
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-          {loading ? <p className="text-sm text-muted-foreground">Loading gigs...</p> : null}
+          {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+          {loading ? <p className="text-sm text-slate-400">Loading gigs...</p> : null}
 
-          <div className="overflow-x-auto rounded-md border">
+          <div className="dashboard-table-wrap overflow-x-auto rounded-[22px]">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-left">
+              <thead className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
                 <tr>
                   <th className="px-4 py-2 font-medium">Date</th>
                   <th className="px-4 py-2 font-medium">Venue</th>
@@ -239,22 +242,22 @@ export function GigsClient() {
                   const linked = invoiceByGigId.get(gig.id);
 
                   return (
-                    <tr key={gig.id} className="border-t">
-                      <td className="px-4 py-2">{formatDate(gig.event_date)}</td>
-                      <td className="px-4 py-2">{gig.location || gig.title || "-"}</td>
-                      <td className="px-4 py-2">{gig.clients?.name ?? "-"}</td>
-                      <td className="px-4 py-2">{formatCurrency(gig.rate_cents)}</td>
+                    <tr key={gig.id} className="border-t border-white/5">
+                      <td className="px-4 py-2 text-slate-200">{formatDate(gig.event_date)}</td>
+                      <td className="px-4 py-2 text-slate-200">{gig.location || gig.title || "-"}</td>
+                      <td className="px-4 py-2 text-slate-200">{gig.clients?.name ?? "-"}</td>
+                      <td className="px-4 py-2 text-slate-200">{formatCurrency(gig.rate_cents)}</td>
                       <td className="px-4 py-2">
                         <span className={`rounded-full px-2 py-1 text-xs font-medium ${statusClass(gig.status)}`}>{gig.status.toUpperCase()}</span>
                       </td>
-                      <td className="px-4 py-2">{linked ? `${linked.invoice_number} (${linked.status})` : "-"}</td>
+                      <td className="px-4 py-2 text-slate-200">{linked ? `${linked.invoice_number} (${linked.status})` : "-"}</td>
                       <td className="px-4 py-2">
                         <div className="flex flex-wrap gap-2">
-                          <Button size="sm" variant="outline" disabled={saving || Boolean(linked)} onClick={() => void createInvoiceFromGig(gig)}>
+                          <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" size="sm" variant="outline" disabled={saving || Boolean(linked)} onClick={() => void createInvoiceFromGig(gig)}>
                             Create Invoice from Gig
                           </Button>
                           {linked ? (
-                            <Button size="sm" variant="outline" asChild>
+                            <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" size="sm" variant="outline" asChild>
                               <Link href={`/invoices?invoice=${encodeURIComponent(linked.invoice_number)}`}>Open Invoice</Link>
                             </Button>
                           ) : null}
@@ -266,7 +269,7 @@ export function GigsClient() {
 
                 {!loading && gigs.length === 0 ? (
                   <tr>
-                    <td className="px-4 py-10 text-center text-muted-foreground" colSpan={7}>
+                    <td className="px-4 py-10 text-center text-slate-400" colSpan={7}>
                       No gigs in this tab yet.
                     </td>
                   </tr>
@@ -278,28 +281,29 @@ export function GigsClient() {
       </Card>
 
       {showAddModal ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <Card className="w-full max-w-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <Card className="dashboard-panel-strong w-full max-w-xl rounded-[28px] border-white/10 text-slate-100">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Add Gig</CardTitle>
-              <Button variant="outline" onClick={() => setShowAddModal(false)}>
+              <CardTitle className="text-white">Add Gig</CardTitle>
+              <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" variant="outline" onClick={() => setShowAddModal(false)}>
                 Close
               </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               <label className="space-y-2 text-sm">
-                <span className="font-medium">Venue</span>
-                <Input value={newVenue} onChange={(event) => setNewVenue(event.target.value)} placeholder="Neon Nights" />
+                <span className="font-medium text-slate-200">Venue</span>
+                <Input className="dashboard-input" value={newVenue} onChange={(event) => setNewVenue(event.target.value)} placeholder="Neon Nights" />
               </label>
 
               <label className="space-y-2 text-sm">
-                <span className="font-medium">Date</span>
-                <Input type="date" value={newDate} onChange={(event) => setNewDate(event.target.value)} />
+                <span className="font-medium text-slate-200">Date</span>
+                <Input className="dashboard-input" type="date" value={newDate} onChange={(event) => setNewDate(event.target.value)} />
               </label>
 
               <label className="space-y-2 text-sm">
-                <span className="font-medium">Fee ($)</span>
+                <span className="font-medium text-slate-200">Fee ($)</span>
                 <Input
+                  className="dashboard-input"
                   type="text"
                   inputMode="decimal"
                   value={newFee}
@@ -309,9 +313,9 @@ export function GigsClient() {
               </label>
 
               <label className="space-y-2 text-sm">
-                <span className="font-medium">Client (optional)</span>
+                <span className="font-medium text-slate-200">Client (optional)</span>
                 <select
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  className="dashboard-select h-10 w-full rounded-md px-3 text-sm"
                   value={newClientId}
                   onChange={(event) => setNewClientId(event.target.value)}
                 >
@@ -325,10 +329,10 @@ export function GigsClient() {
               </label>
 
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setShowAddModal(false)}>
+                <Button className="border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white" variant="outline" onClick={() => setShowAddModal(false)}>
                   Cancel
                 </Button>
-                <Button disabled={saving || !newVenue.trim() || !newDate || !newFee} onClick={() => void addGig()}>
+                <Button className="bg-[var(--dashboard-accent)] text-slate-950 hover:bg-[var(--dashboard-accent-strong)]" disabled={saving || !newVenue.trim() || !newDate || !newFee} onClick={() => void addGig()}>
                   {saving ? "Saving..." : "Add Gig"}
                 </Button>
               </div>
