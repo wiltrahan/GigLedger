@@ -17,7 +17,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="dashboard-panel hidden w-64 shrink-0 rounded-[28px] p-4 text-slate-100 lg:block">
+    <aside className="dashboard-panel hidden w-64 shrink-0 rounded-[28px] p-4 text-slate-100 md:block">
       <div className="px-2 pb-4 pt-2">
         <p className="text-xs uppercase tracking-[0.28em] text-[var(--dashboard-accent)]">GigLedger</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">Workspace</h2>

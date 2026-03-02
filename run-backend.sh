@@ -1,18 +1,18 @@
-#!/bin/zsh
+#!/usr/bin/env sh
 
-set -euo pipefail
+set -eu
 
-SCRIPT_DIR=${0:A:h}
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT_ENV_FILE="$SCRIPT_DIR/.env.local"
 SERVICE_DIR="$SCRIPT_DIR/gigledger-service"
 
-if [[ ! -f "$ROOT_ENV_FILE" ]]; then
+if [ ! -f "$ROOT_ENV_FILE" ]; then
   echo "Missing $ROOT_ENV_FILE"
   exit 1
 fi
 
 set -a
-source "$ROOT_ENV_FILE"
+. "$ROOT_ENV_FILE"
 set +a
 
 : "${NEXT_PUBLIC_SUPABASE_URL:?NEXT_PUBLIC_SUPABASE_URL is required in .env.local}"
